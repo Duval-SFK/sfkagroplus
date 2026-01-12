@@ -11,7 +11,10 @@ class TFLiteService {
   final int inputSize = 128;
   final int numChannels = 3;
 
-  Future<void> loadModel({String modelPath = 'assets/model.tflite', String labelsPath = 'assets/labels.txt'}) async {
+  Future<void> loadModel({
+    String modelPath = 'assets/model.tflite',
+    String labelsPath = 'assets/labels.txt',
+  }) async {
     // Charger le .tflite depuis les assets
     final modelData = await rootBundle.load(modelPath);
     final modelBytes = modelData.buffer.asUint8List();
@@ -19,9 +22,13 @@ class TFLiteService {
 
     // Charger les labels
     final rawLabels = await rootBundle.loadString(labelsPath);
-    labels = rawLabels.split('\n').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+    labels = rawLabels
+        .split('\n')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
 
-    print('TFLite model loaded, labels: ${labels.length}');
+    // print('TFLite model loaded, labels: ${labels.length}');
   }
 
   /// Prétraite l'image (File) pour correspondre à l'entrée du modèle:
@@ -37,15 +44,19 @@ class TFLiteService {
     }
 
     // Convertir/exif orientation handled by `image` package automatically on many formats.
-    final img.Image resized = img.copyResize(image, width: inputSize, height: inputSize);
+    final img.Image resized = img.copyResize(
+      image,
+      width: inputSize,
+      height: inputSize,
+    );
 
     // Créer le tensor d'entrée : [1][H][W][C]
-    final input = List.generate(1, (_) =>
-        List.generate(inputSize, (_) =>
-            List.generate(inputSize, (_) =>
-                List.filled(numChannels, 0.0)
-            )
-        )
+    final input = List.generate(
+      1,
+      (_) => List.generate(
+        inputSize,
+        (_) => List.generate(inputSize, (_) => List.filled(numChannels, 0.0)),
+      ),
     );
 
     for (int y = 0; y < inputSize; y++) {
@@ -83,14 +94,13 @@ class TFLiteService {
     // Construire list (label,score)
     final results = <Map<String, dynamic>>[];
     for (int i = 0; i < numClasses; i++) {
-      results.add({
-        'label': labels[i],
-        'score': scores[i],
-      });
+      results.add({'label': labels[i], 'score': scores[i]});
     }
 
     // Trier par score décroissant et renvoyer top3
-    results.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+    results.sort(
+      (a, b) => (b['score'] as double).compareTo(a['score'] as double),
+    );
     return results.take(3).toList();
   }
 

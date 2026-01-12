@@ -14,7 +14,7 @@ class ChatbotPage extends StatefulWidget {
 }
 
 class _ChatbotPageState extends State<ChatbotPage> {
-  int _selectedIndex = 1; // 0 = Météo, 1 = Chatbot (par défaut), 2 = Profil
+  final int _selectedIndex = 1; // 0 = Météo, 1 = Chatbot (par défaut), 2 = Profil
 
   // Liste des pages
   final List<Widget> _pages = [

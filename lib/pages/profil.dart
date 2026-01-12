@@ -141,6 +141,7 @@ class _ProfilPageState extends State<ProfilPage> {
                           if (!mounted) return;
                           // enlever toute la pile et revenir à la page de login
                           Navigator.of(
+                            // ignore: use_build_context_synchronously
                             context,
                           ).pushNamedAndRemoveUntil('/login', (route) => false);
                         },

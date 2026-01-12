@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/auth_service.dart';
@@ -198,8 +200,14 @@ class _InscriptionPageState extends State<InscriptionPage> {
                   _buildConfirmationText("Nom : ", _nomController.text),
                   _buildConfirmationText("Email : ", _emailController.text),
                   _buildConfirmationText("Culture : ", _cultureController.text),
-                  _buildConfirmationText("Superficie en m² : ", _surfaceController.text),
-                  _buildConfirmationText("Localisation : ", _localisationController.text),
+                  _buildConfirmationText(
+                    "Superficie en m² : ",
+                    _surfaceController.text,
+                  ),
+                  _buildConfirmationText(
+                    "Localisation : ",
+                    _localisationController.text,
+                  ),
                   const SizedBox(height: 10),
                   const Text("Si tout est correct, cliquez sur 'S'inscrire'"),
                 ],
@@ -218,7 +226,10 @@ class _InscriptionPageState extends State<InscriptionPage> {
         text: TextSpan(
           style: DefaultTextStyle.of(context).style,
           children: <TextSpan>[
-            TextSpan(text: label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+              text: label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             TextSpan(text: value),
           ],
         ),
@@ -244,6 +255,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
+    if (context.mounted) {}
     try {
       await AuthService.registerUser(
         name: name,
@@ -255,16 +267,21 @@ class _InscriptionPageState extends State<InscriptionPage> {
       );
 
       // fermer loader
-      Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
 
       // l'utilisateur est automatiquement connecté par Firebase -> on redirige
-      Navigator.pushReplacementNamed(context, '/chatbot');
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/chatbot');
+      }
     } catch (e) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur inscription : $e')),
-      );
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur inscription : $e')));
+      }
     }
   }
 }
-

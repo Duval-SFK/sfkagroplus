@@ -55,7 +55,6 @@ class _MeteoPageState extends State<MeteoPage> {
       setState(() {
         _error = "Erreur : ${e.toString()}";
       });
-      print(_error); // Pour le débogage
     } finally {
       setState(() {
         _loading = false;
